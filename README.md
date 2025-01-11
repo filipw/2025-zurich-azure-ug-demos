@@ -1,0 +1,1 @@
+# 2025-zurich-azure-ug-demos
