@@ -1,9 +1,9 @@
 import json
 import time
-import subprocess
+from mlx_lm import load, generate
 from typing import List, Dict, Tuple
 
-def load_validation_data(file_path: str, limit: int = 10) -> List[Dict[str, str]]:
+def load_validation_data(file_path: str, limit: int) -> List[Dict[str, str]]:
     examples = []
     print(f"Loading {limit} validation examples...")
     with open(file_path, 'r') as f:
@@ -20,7 +20,7 @@ def load_validation_data(file_path: str, limit: int = 10) -> List[Dict[str, str]
             })
     return examples
 
-def run_inference(model_path: str, adapter_path: str, prompt: str, base_model: bool = False) -> Tuple[str, float]:
+def run_inference(model, tokenizer, prompt: str, base_model: bool = False) -> Tuple[str, float]:
     start_time = time.time()
     
     if base_model:
@@ -36,37 +36,34 @@ def run_inference(model_path: str, adapter_path: str, prompt: str, base_model: b
 - mute: Mute audio
 - unmute: Unmute audio
 
-You should respond with a function call in the format: fn:function_name "parameter" (if needed)
-For example: fn:play_song "bohemian rhapsody" or fn:play_list "workout mix" or fn:next, otherwise say "Sorry I cannot help with that"""
+You should respond with a function call in the format: fn:function_name "parameter" (if needed and in lowercase)
+For example: fn:play_song "bohemian rhapsody" or fn:play_list "workout mix" or fn:next. In all other cases you respond with "Sorry I cannot help with that"""
         
-        formatted_prompt = f"<|system|>{system_prompt}<|end|>\n<|user|>{prompt}<|end|>"
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
     else:
-        formatted_prompt = f"<|user|>{prompt}<|end|>"
+        messages = [{"role": "user", "content": prompt}]
+
+    prompt = tokenizer.apply_chat_template(messages, add_generation_prompt=True)
+    response = generate(model, tokenizer, prompt=prompt, max_tokens=50)
     
-    cmd = [
-        "python", "-m", "mlx_lm.generate",
-        "--model", model_path,
-        "--prompt", formatted_prompt,
-        "--max-tokens", "50",
-        "--temp", "0.0"
-    ]
+    if '<|assistant|>' in response:
+        response = response.split('<|assistant|>')[1]
     
-    if adapter_path:
-        cmd.extend(["--adapter-path", adapter_path])
-    
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        response = result.stdout.strip()
-        if "==========" in response:
-            response = response.split("==========")[1].strip()
-        if "<|end|>" in response:
-            response = response.split("<|end|>")[0].strip()
-        return response, time.time() - start_time
-    except subprocess.CalledProcessError as e:
-        return "", time.time() - start_time
+    if '<|end|>' in response:
+        response = response.split('<|end|>')[0]
+        
+    return response.strip(), time.time() - start_time
 
 def evaluate_model(model_path: str, adapter_path: str, validation_data: List[Dict[str, str]], model_name: str):
     results = {"perfect": 0, "command": 0, "total": 0, "time": 0}
+    total_examples = len(validation_data)
+    index_width = len(str(total_examples))  # Calculate width based on number of digits
+    
+    print(f"\n=== Loading {model_name} ===")
+    model, tokenizer = load(model_path, adapter_path=adapter_path if adapter_path else None)
     
     print(f"\n=== Testing {model_name} ===")
     
@@ -75,8 +72,8 @@ def evaluate_model(model_path: str, adapter_path: str, validation_data: List[Dic
         expected = example["expected"]
         
         actual, duration = run_inference(
-            model_path, 
-            adapter_path, 
+            model, 
+            tokenizer,
             input_text, 
             base_model=(adapter_path is None)
         )
@@ -86,15 +83,12 @@ def evaluate_model(model_path: str, adapter_path: str, validation_data: List[Dic
         results["perfect"] += int(perfect_match)
         results["time"] += duration
         
-        print(f"\nExample {i}/10:")
-        print(f"Input: '{input_text}'")
-        print(f"Expected: {expected}")
-        print(f"Got: {actual}")
-        print(f"Match: {'✓' if perfect_match else '✗'}")
+        print(f"[{i:{index_width}d}/{total_examples}] {'✓' if perfect_match else '✗'} '{input_text}' → {actual}")
     
-    print(f"\n{model_name} Summary:")
-    print(f"Perfect Match: {results['perfect']}/{results['total']} ({results['perfect'] / results['total']:.1%})")
-    print(f"Avg Response: {results['time'] / results['total']:.1f}s")
+    print(f"\nSummary: {results['perfect']}/{total_examples} correct ({results['perfect'] / total_examples:.1%}), avg {results['time'] / total_examples:.1f}s per request")
+    
+    del model
+    del tokenizer
     return results
 
 def main():
@@ -104,9 +98,9 @@ def main():
     
     print("=== Starting Validation ===")
     # we can set this to a larger value to test more examples
-    validation_data = load_validation_data(VALIDATION_FILE, limit=10)
+    validation_data = load_validation_data(VALIDATION_FILE, limit=25)
     
-    finetuned_results = evaluate_model(MODEL_PATH, ADAPTER_PATH, validation_data, "Fine-tuned Model")
+    #finetuned_results = evaluate_model(MODEL_PATH, ADAPTER_PATH, validation_data, "Fine-tuned Model")
     print("\n" + "="*50 + "\n")
     base_results = evaluate_model(MODEL_PATH, None, validation_data, "Base Model")
 

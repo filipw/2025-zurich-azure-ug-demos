@@ -187,144 +187,82 @@ There is a simple validation script in the repo which runs the inference using d
 python validate.py
 ```
 
-The script execute the inference against the fine tuned model (without the system instruction) and the base model with a system instruction and a few shot learning approach. The output should be similar to:
+The script execute the inference against the fine tuned model (without the system instruction) and the base model with a system instruction and a few shot learning approach. The result should show that the fine tuned model is not only faster than the base model (as it uses less tokens!) but also dramatically more accurate than the base model.
+
+The output should be similar to:
 
 ```
 === Starting Validation ===
-Loading 10 validation examples...
+Loading 25 validation examples...
+
+=== Loading Fine-tuned Model ===
+Fetching 13 files: 100%|██████████████████████████████████████████████████| 13/13 [00:00<00:00, 74387.38it/s]
 
 === Testing Fine-tuned Model ===
+[ 1/25] ✓ 'Boost the volume' → fn:vol_up
+[ 2/25] ✓ 'What's your name again?' → Sorry I cannot help with that
+[ 3/25] ✓ 'Turn up' → fn:vol_up
+[ 4/25] ✓ 'Lower it' → fn:vol_down
+[ 5/25] ✓ 'Last song please' → fn:prev
+[ 6/25] ✓ 'Skip' → fn:next
+[ 7/25] ✓ 'Stop all' → fn:stop
+[ 8/25] ✓ 'Audio enable' → fn:unmute
+[ 9/25] ✓ 'start power workout' → fn:play_list "power workout"
+[10/25] ✓ 'Play We Will Rock You' → fn:play_song "we will rock you"
+[11/25] ✓ 'Play Any Way You Want It' → fn:play_song "any way you want it"
+[12/25] ✓ 'Forward' → fn:next
+[13/25] ✓ 'Play Faithfully' → fn:play_song "faithfully"
+[14/25] ✓ 'Play Open Arms' → fn:play_song "open arms"
+[15/25] ✓ 'Play Separate Ways' → fn:play_song "separate ways"
+[16/25] ✓ 'Switch' → fn:next
+[17/25] ✓ 'Back' → fn:prev
+[18/25] ✓ 'Reverse' → fn:prev
+[19/25] ✓ 'End' → fn:stop
+[20/25] ✓ 'Finish it' → fn:stop
+[21/25] ✓ 'Pause now' → fn:pause
+[22/25] ✓ 'Stop briefly' → fn:pause
+[23/25] ✓ 'Silent' → fn:mute
+[24/25] ✓ 'No noise' → fn:mute
+[25/25] ✓ 'Kill audio' → fn:stop
 
-Example 1/10:
-Input: 'Boost the volume'
-Expected: fn:vol_up
-Got: fn:vol_up
-Match: ✓
-
-Example 2/10:
-Input: 'What's your name again?'
-Expected: Sorry I cannot help with that
-Got: Sorry I cannot help with that
-Match: ✓
-
-Example 3/10:
-Input: 'Turn up'
-Expected: fn:vol_up
-Got: fn:vol_up
-Match: ✓
-
-Example 4/10:
-Input: 'Lower it'
-Expected: fn:vol_down
-Got: fn:vol_down
-Match: ✓
-
-Example 5/10:
-Input: 'Last song please'
-Expected: fn:prev
-Got: fn:prev
-Match: ✓
-
-Example 6/10:
-Input: 'Skip'
-Expected: fn:next
-Got: fn:next
-Match: ✓
-
-Example 7/10:
-Input: 'Stop all'
-Expected: fn:stop
-Got: fn:stop
-Match: ✓
-
-Example 8/10:
-Input: 'Audio enable'
-Expected: fn:unmute
-Got: fn:unmute
-Match: ✓
-
-Example 9/10:
-Input: 'start power workout'
-Expected: fn:play_list "power workout"
-Got: fn:play_list "power workout"
-Match: ✓
-
-Example 10/10:
-Input: 'Play We Will Rock You'
-Expected: fn:play_song "we will rock you"
-Got: fn:play_song "we will rock you"
-Match: ✓
-
-Fine-tuned Model Summary:
-Perfect Match: 10/10 (100.0%)
-Avg Response: 6.1s
+Summary: 25/25 correct (100.0%), avg 1.3s per request
 
 ==================================================
 
 
+=== Loading Base Model ===
+Fetching 13 files: 100%|██████████████████████████████████████████████████| 13/13 [00:00<00:00, 41401.63it/s]
+
 === Testing Base Model ===
+[ 1/25] ✓ 'Boost the volume' → fn:vol_up
+[ 2/25] ✗ 'What's your name again?' → I'm Phi, an AI developed by Microsoft.
+[ 3/25] ✓ 'Turn up' → fn:vol_up
+[ 4/25] ✓ 'Lower it' → fn:vol_down
+[ 5/25] ✗ 'Last song please' → fn:next
+[ 6/25] ✓ 'Skip' → fn:next
+[ 7/25] ✓ 'Stop all' → fn:stop
+[ 8/25] ✓ 'Audio enable' → fn:unmute
+[ 9/25] ✓ 'start power workout' → fn:play_list "power workout"
+[10/25] ✗ 'Play We Will Rock You' → fn:play_song "We Will Rock You"
+[11/25] ✗ 'Play Any Way You Want It' → fn:play_song "Any Way You Want It"
+[12/25] ✓ 'Forward' → fn:next
+[13/25] ✗ 'Play Faithfully' → fn:play_song "Faithfully"
+[14/25] ✗ 'Play Open Arms' → fn:play_song "Open Arms"
+[15/25] ✗ 'Play Separate Ways' → fn:play_song "Separate Ways"
+[16/25] ✓ 'Switch' → fn:next
+[17/25] ✗ 'Back' → fn:play_song "Back in Black"
+[18/25] ✓ 'Reverse' → fn:prev
+[19/25] ✗ 'End' → fn:stop
+fn:mute
+fn:vol_down
+[20/25] ✗ 'Finish it' → I'm sorry, but it seems like there was no specific request or command provided to respond to. If you have a command or request related to the music player functions, please provide it, and I'll respond accordingly.
+[21/25] ✓ 'Pause now' → fn:pause
+[22/25] ✗ 'Stop briefly' → fn:stop
+[23/25] ✓ 'Silent' → fn:mute
+[24/25] ✗ 'No noise' → fn:mute
 
-Example 1/10:
-Input: 'Boost the volume'
-Expected: fn:vol_up
-Got: fn:vol_up
-Match: ✓
+This command will mute the audio output of the music player, effectively stopping any noise from being emitted.
+[25/25] ✓ 'Kill audio' → fn:stop
 
-Example 2/10:
-Input: 'What's your name again?'
-Expected: Sorry I cannot help with that
-Got: fn:play_song "bohemian rhapsody"
-Match: ✗
-
-Example 3/10:
-Input: 'Turn up'
-Expected: fn:vol_up
-Got: fn:vol_up
-Match: ✓
-
-Example 4/10:
-Input: 'Lower it'
-Expected: fn:vol_down
-Got: fn:vol_down
-Match: ✓
-
-Example 5/10:
-Input: 'Last song please'
-Expected: fn:prev
-Got: fn:next
-Match: ✗
-
-Example 6/10:
-Input: 'Skip'
-Expected: fn:next
-Got: fn:next
-Match: ✓
-
-Example 7/10:
-Input: 'Stop all'
-Expected: fn:stop
-Got: fn:stop
-Match: ✓
-
-Example 8/10:
-Input: 'Audio enable'
-Expected: fn:unmute
-Got: fn:mute
-Match: ✗
-
-Example 9/10:
-Input: 'start power workout'
-Expected: fn:play_list "power workout"
-Got: fn:play_list "power workout"
-Match: ✓
-
-Example 10/10:
-Input: 'Play We Will Rock You'
-Expected: fn:play_song "we will rock you"
-Got: fn:play_song "We Will Rock You"
-Match: ✗
-
-Base Model Summary:
-Perfect Match: 6/10 (60.0%)
-Avg Response: 6.8s
+Summary: 13/25 correct (52.0%), avg 2.5s per request
 ```

@@ -22,7 +22,7 @@
 {"text": "<|user|>Stop briefly<|end|>\n<|assistant|>fn:pause<|end|>"}
 {"text": "<|user|>Silent<|end|>\n<|assistant|>fn:mute<|end|>"}
 {"text": "<|user|>No noise<|end|>\n<|assistant|>fn:mute<|end|>"}
-{"text": "<|user|>Kill audio<|end|>\n<|assistant|>fn:mute<|end|>"}
+{"text": "<|user|>Kill audio<|end|>\n<|assistant|>fn:stop<|end|>"}
 {"text": "<|user|>Enable audio<|end|>\n<|assistant|>fn:unmute<|end|>"}
 {"text": "<|user|>Play cool down<|end|>\n<|assistant|>fn:play_list \"cool down\"<|end|>"}
 {"text": "<|user|>Start post workout<|end|>\n<|assistant|>fn:play_list \"post workout\"<|end|>"}
