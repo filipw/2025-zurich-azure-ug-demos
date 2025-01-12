@@ -100,7 +100,7 @@ def main():
     # we can set this to a larger value to test more examples
     validation_data = load_validation_data(VALIDATION_FILE, limit=25)
     
-    #finetuned_results = evaluate_model(MODEL_PATH, ADAPTER_PATH, validation_data, "Fine-tuned Model")
+    finetuned_results = evaluate_model(MODEL_PATH, ADAPTER_PATH, validation_data, "Fine-tuned Model")
     print("\n" + "="*50 + "\n")
     base_results = evaluate_model(MODEL_PATH, None, validation_data, "Base Model")
 

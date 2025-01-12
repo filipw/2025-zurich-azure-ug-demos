@@ -171,3 +171,5 @@ cython_debug/
 .pypirc
 .DS_Store
 fine-tuning/adapters
+fine-tuning/fused_model
+strathweb-phi-engine-samples/swift/SampleExecutable/.swiftpm
