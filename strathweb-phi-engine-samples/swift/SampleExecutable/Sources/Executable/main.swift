@@ -12,7 +12,7 @@ try! inferenceOptionsBuilder.withTemperature(temperature: 0.0)
 try inferenceOptionsBuilder.withTokenCount(contextWindow: 50)
 let inferenceOptions = try! inferenceOptionsBuilder.build()
 
-let cacheDir = FileManager.default.currentDirectoryPath.appending("/.cache")
+let cacheDir = (sourceFileDir as NSString).appending("/.cache")
 
 class ModelEventsHandler: PhiEventHandler {
     func onInferenceStarted() {}

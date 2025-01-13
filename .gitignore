@@ -173,3 +173,4 @@ cython_debug/
 fine-tuning/adapters
 fine-tuning/fused_model
 strathweb-phi-engine-samples/swift/SampleExecutable/.swiftpm
+strathweb-phi-engine-samples/swift/SampleExecutable/.build
