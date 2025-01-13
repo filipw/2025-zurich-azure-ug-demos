@@ -153,21 +153,16 @@ It should be about 140 MB in size.
 The base model can be invoked with the adapter to test the fine tuning.
 
 ```
-python -m mlx_lm.generate --model microsoft/Phi-3-mini-4k-instruct --adapter-path ./adapters --max-token 2048 --prompt "i don't like this song" --eos-token "<|end|>" 
+python -m mlx_lm.generate --model microsoft/Phi-3-mini-4k-instruct --adapter-path ./adapters --max-token 2048 --prompt "i don't like this song" --extra-eos-token "<|end|>" --temp 0.0
 ```
 
 ```
 Expected output:
-Fetching 13 files: 100%|
 ==========
-Prompt: <|user|>
-i don't like this song<|end|>
-<|assistant|>
-
-fn:next<|end|>
+fn:next
 ==========
-Prompt: 10 tokens, 43.307 tokens-per-sec
-Generation: 5 tokens, 9.144 tokens-per-sec
+Prompt: 10 tokens, 44.057 tokens-per-sec
+Generation: 4 tokens, 9.403 tokens-per-sec
 Peak memory: 7.821 GB
 ```
 
