@@ -1,6 +1,7 @@
 import json
 import time
 from mlx_lm import load, generate
+from mlx_lm.sample_utils import make_sampler
 from typing import List, Dict, Tuple
 
 def load_validation_data(file_path: str, limit: int) -> List[Dict[str, str]]:
@@ -46,8 +47,9 @@ For example: fn:play_song "bohemian rhapsody" or fn:play_list "workout mix" or f
     else:
         messages = [{"role": "user", "content": prompt}]
 
+    sampler = make_sampler(0.0)
     prompt = tokenizer.apply_chat_template(messages, add_generation_prompt=True)
-    response = generate(model, tokenizer, prompt=prompt, max_tokens=50)
+    response = generate(model, tokenizer, prompt=prompt, sampler=sampler, max_tokens=50)
     
     if '<|assistant|>' in response:
         response = response.split('<|assistant|>')[1]
