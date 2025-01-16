@@ -1,4 +1,4 @@
-# Phi-3 fine tuning with MLX
+# Phi fine tuning with MLX
 
 ## Prerequisites 
 
@@ -48,7 +48,7 @@ Sample `./data/train.jsonl`:
 python -m mlx_lm.lora --model microsoft/Phi-3-mini-4k-instruct --train --data ./data --iters 500
 ```
 
-With the included data set this runs about 15 min on M1 CPU. It will be longer if each line is extended for more tokens.
+With the included data set this runs about 10 min on M1 Mac. It will be longer if each line is extended for more tokens.
 
 Expected output should be similar too:
 
