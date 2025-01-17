@@ -124,10 +124,10 @@ Saved final weights to adapters/adapters.safetensors.
 
 ### Loss progression
 
-Starting val loss: 5.617
-Final val loss: 0.845
-Training loss stabilized around 0.7-0.8 in the later iterations
-Val loss has been fairly consistent since iter 200 (0.866 → 0.813 → 0.845)
+- Starting val loss: 5.617
+- Final val loss: 0.845
+- Training loss stabilized around 0.7-0.8 in the later iterations
+- Val loss has been fairly consistent since iter 200 (0.866 → 0.813 → 0.845)
 
 ### Key observations:
 
@@ -156,8 +156,9 @@ The base model can be invoked with the adapter to test the fine tuning.
 python -m mlx_lm.generate --model microsoft/Phi-3-mini-4k-instruct --adapter-path ./adapters --max-token 2048 --prompt "i don't like this song" --extra-eos-token "<|end|>" --temp 0.0
 ```
 
-```
 Expected output:
+
+```
 ==========
 fn:next
 ==========
